@@ -1,1 +1,17 @@
-# project + dependencies
+[project]
+name = "wipehex"
+version = "0.1.0"
+description = "Fast CLI tool to find and delete junk files"
+readme = "README.md"
+requires-python = ">=3.8"
+authors =[
+    {name = "Saeed Ghlolami", email = "scramjet14@gmail.com"}
+]
+dependencies = [
+    "typer[all]",
+    "rich",
+    "humanize"
+]
+
+[project.scripts]
+wipehex = "wipehex.cli:app"
