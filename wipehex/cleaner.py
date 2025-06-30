@@ -3,12 +3,23 @@ from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
+from wipehex.config import load_ignore_config
 import humanize
 import re
 import os
 import typer
 
 class Cleaner:
+    def __init__(self):
+        self.ignore = load_ignore_config()
+    
+    def is_ignored(self, file: Path) -> bool:
+        return (
+            str(file) in self.ignore["paths"] or
+            file.suffix in self.ignore["exts"] or
+            file.name in self.ignore["names"]
+        )
+  
     def scan_directory(self, path: str, extensions: list[str], min_size_str: str, sort_by: str):
         files = self.find_matching_files(path, extensions, min_size_str, sort_by)
         self.display_files(files)
@@ -20,6 +31,8 @@ class Cleaner:
 
         for file in path_obj.rglob("*"):
             if file.is_file():
+                if self.is_ignored(file):
+                    continue    # Skip ignored files
                 size_bytes = file.stat().st_size
                 if size_bytes < min_size_bytes:
                     continue
